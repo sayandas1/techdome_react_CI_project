@@ -1,0 +1,59 @@
+To set up a GitHub Actions workflow for Continuous Integration and Continuous Deployment (CI/CD) to deploy a React app on Surge, you'll need to create a YAML file in the .github/workflows directory of your repository. Here's a step-by-step guide:
+
+Implementation:
+
+GitHub Actions Workflow:
+Create a new YAML file, for example, .github/workflows/deploy.yml. Add the following content:
+
+yaml
+Copy code
+name: Deploy to Surge
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to Surge
+        run: |
+          npm install -g surge
+          surge ./build --domain your-surge-domain.surge.sh
+        env:
+          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+Replace your-surge-domain.surge.sh with your actual Surge domain. This workflow triggers on every push to the main branch.
+
+Surge Token and Login:
+You'll need to add Surge credentials as secrets to your GitHub repository. Go to your GitHub repository > Settings > Secrets, and add the following secrets:
+
+SURGE_LOGIN: Your Surge login email.
+SURGE_TOKEN: Your Surge token. You can obtain this by running surge token in your terminal.
+Push Changes:
+Commit the .github/workflows/main.yml file to your repository and push the changes. This should trigger the GitHub Actions workflow.
+
+Check Workflow:
+Go to the "Actions" tab on the GitHub repository to check the status and logs of the workflow.
+
+Challenges Faced:
+  Legacy React Code: The existing React codebase was built using older practices and dependencies, leading to compatibility issues during the build and test phases. Upgrading dependencies and refactoring the code became necessary to resolve these challenges.
+  Error Resolution: The presence of errors, particularly the missing dependencies and unused variables, required thorough debugging. Ensuring that all dependencies were correctly specified and utilized in React components was crucial for successful builds.
+  Outdated Documentation: The initial documentation provided might not have fully addressed the specific issues in the older React code. Additional troubleshooting and adjustments were necessary to adapt the workflow to the project's requirements.
